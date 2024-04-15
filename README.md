@@ -1,16 +1,17 @@
-# test_drive
+# Codelab Flutter: Gerador de Nomes Legais
 
-A new Flutter project.
+![Exemplo de aplicativo Flutter](https://codelabs.developers.google.com/static/codelabs/flutter-codelab-first/img/1d26af443561f39c.gif)
 
-## Getting Started
+## Introdução
 
-This project is a starting point for a Flutter application.
+O Flutter é o kit de ferramentas de interface do Google para criar aplicativos para dispositivos móveis, Web e computadores com uma única base de código. Neste codelab, você vai criar um aplicativo Flutter que gera nomes legais, como "newstay", "lightstream", "mainbrake" ou "graypine". O usuário pode pedir o próximo nome, marcar o atual como um favorito e conferir a lista de nomes favoritos em uma página separada. O app é responsivo em diferentes tamanhos de tela.
 
-A few resources to get you started if this is your first Flutter project:
+## O que eu aprendi
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Noções básicas de como o Flutter funciona.
+- Como criar layouts no Flutter.
+- Como conectar as interações do usuário, como pressionamentos de botão, ao comportamento do app.
+- Como manter o código do Flutter organizado.
+- Como tornar o app responsivo em diferentes telas.
+- Como criar uma aparência consistente no app.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

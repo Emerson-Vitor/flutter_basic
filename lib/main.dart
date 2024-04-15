@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
       create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Namer App',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
@@ -29,22 +30,22 @@ class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   List<WordPair> favorites = [];
 
-  void toggleFavorite(){
-    if(favorites.contains(current)){
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
       favorites.remove(current);
-    }else{
+    } else {
       favorites.add(current);
     }
     notifyListeners();
   }
-  void getNext(){
+
+  void getNext() {
     current = WordPair.random();
     notifyListeners();
   }
 }
 
-class MyHomePage extends StatefulWidget{
-
+class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -54,37 +55,71 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-     return Scaffold(
-       body: Row(
-         children: [
-           SafeArea(
-               child: NavigationRail(
-                 extended: false,
-                 destinations: [
-                   NavigationRailDestination(
-                       icon: Icon(Icons.home),
-                       label: Text("Home")
-                   ),
-                   NavigationRailDestination(
-                       icon: Icon(Icons.favorite),
-                       label: Text("Favorites")
-               )
-             ], selectedIndex: selectedIndex,
-                 onDestinationSelected: (value){
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = GeneratorPage();
+        break;
+      case 1:
+        page = FavotitesPage();
+        break;
+      default:
+        throw UnimplementedError('no widget $selectedIndex');
+    }
+    return LayoutBuilder(builder: (context, constraints) {
+      return Scaffold(
+        body: Row(
+          children: [
+            SafeArea(
+              child: NavigationRail(
+                extended: constraints.maxWidth >= 600,
+                destinations: [
+                  NavigationRailDestination(
+                      icon: Icon(Icons.home), label: Text("Home")),
+                  NavigationRailDestination(
+                      icon: Icon(Icons.favorite), label: Text("Favorites"))
+                ],
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (value) {
                   setState(() {
                     selectedIndex = value;
                   });
-                 },
-               ),
-           ),
-           Expanded(child: Container(
-             color: Theme.of(context).colorScheme.primaryContainer,
-             child: GeneratorPage(),
-           )
-           )
-         ],
-       ),
-     );
+                },
+              ),
+            ),
+            Expanded(
+                child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: page,
+            ))
+          ],
+        ),
+      );
+    });
+  }
+}
+
+class FavotitesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+  var appState = context.watch<MyAppState>();
+  if (appState.favorites.isEmpty){
+    return Center(
+      child: Text('no favorites yet.'),
+    );
+  }
+  return ListView(
+    children: [
+      Padding(padding: const EdgeInsets.all(20),
+      child: Text('You have ${appState.favorites.length} favorites:'),
+      ),
+      for(var pair in appState.favorites)
+        ListTile(
+          leading: Icon(Icons.favorite),
+          title: Text(pair.asLowerCase),
+        )
+    ],
+  );
   }
 }
 
@@ -94,44 +129,46 @@ class GeneratorPage extends StatelessWidget {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
     IconData icon;
-    if (appState.favorites.contains(pair)){
+    if (appState.favorites.contains(pair)) {
       icon = Icons.favorite;
-    }else{
+    } else {
       icon = Icons.favorite_border;
     }
     return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BigCard(pair: pair),
-            SizedBox(height: 10,),
-
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [ElevatedButton(
-                  style: ButtonStyle(
-
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BigCard(pair: pair),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton(
+                style: ButtonStyle(),
+                onPressed: () {
+                  appState.toggleFavorite();
+                  print(appState.favorites);
+                },
+                child: Row(
+                  children: [Icon(icon), Text(" Like")],
                 ),
-                  onPressed: (){
-                    appState.toggleFavorite();
-                    print(appState.favorites);
-                  }
-                  , child: Row(
-                    children: [Icon(icon), Text(" Like")],
-                ),
-                ),
-                  SizedBox(width: 10,),
-                  ElevatedButton(
-                    onPressed: (){
-                      appState.getNext();
-                      }
-                    , child: Text('Next'),
-                  ),
-                ],
               ),
-          ],
-        ),
-      );
+              SizedBox(
+                width: 10,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -155,9 +192,9 @@ class BigCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Text(
-        pair.asLowerCase,
-        style: style,
-        semanticsLabel: "${pair.first} ${pair.second}",
+          pair.asLowerCase,
+          style: style,
+          semanticsLabel: "${pair.first} ${pair.second}",
         ),
       ),
     );
