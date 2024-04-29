@@ -1,5 +1,2 @@
 * linguist-vendored
 *.dart linguist-vendored=false
-*.kts linguist-vendored=false
-*.swift linguist-vendored=false
-
